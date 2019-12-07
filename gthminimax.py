@@ -7,28 +7,40 @@ import sys
 import gthclient
 
 
+def heval(grid, me, opp):
+    """
+    Score current grid as # player's pieces minus # of opp's pieces
+    :param grid:    current state of the board as a dictionary of sets. Dict keys are 'black' or 'white' with values
+        being a set of letter+digit combos signifying spots taken by those colors.
+    :param me:     This player's color ('black' or 'white')
+    :param opp:    Enemy player's color ('black' or 'white')
+    :return: int
+    """
+    return len(grid[me]) - len(grid[opp])
+
+
 class Minimax:
     """
     Gothello player using minimax algorithm
     me:     This player's color ('black' or 'white')
     client: gthclient object
     opp:    Enemy player's color ('black' or 'white')
-    boardsize: Size of board
-    board: Set of possible moves left with values letter+digit
-    grid: current state of the board as a dictionary of sets. Dict keys are 'black' or 'white' with values being
+    board_size: Size of board
+    board:  Set of possible moves left with values letter+digit
+    grid:   current state of the board as a dictionary of sets. Dict keys are 'black' or 'white' with values being
         a set of letter+digit combos signifying spots taken by those colors.
     """
 
-    def __init__(self, color, boardsize):
+    def __init__(self, color, board_size):
         """
         :param color: This player's color ('black' or 'white')
-        :param boardsize: Size of board
+        :param board_size: Size of board
 
         """
         self.me = color
         self.client = gthclient.GthClient(self.me, "localhost", 0)
         self.opp = gthclient.opponent(self.me)
-        self.boardsize = boardsize
+        self.board_size = board_size
         self.board = {letter + digit for letter in self.letter_range('a') for digit in self.letter_range('1')}
         self.grid = {"white": set(), "black": set()}
 
@@ -38,7 +50,7 @@ class Minimax:
         :param letter: letter or digit as string
         :return: range of letters or digits
         """
-        for i in range(self.boardsize):
+        for i in range(self.board_size):
             yield chr(ord(letter) + i)
 
     def show_position(self):
@@ -57,13 +69,15 @@ class Minimax:
                     piece = "."
                 print(piece, end="")
             print()
-
-    def score_position(self):
-        """
-        Score current grid as # player's pieces minus # of opp's pieces
-        :return: int
-        """
-        return len(self.grid[self.me]) - len(self.grid[self.opp])
+    
+    def minimax(self, curr_grid, curr_board, depth, max_player):
+        side = self.me  # Called on this player's turn
+        if depth <= 0:
+            return heval(curr_grid, self.me, self.opp)  # returns score from pov of caller of minimax
+        if side == max_player:
+            max_eval = -100
+            for pos in curr_board:
+                #  eval = minimax()
 
     def play(self):
         """
