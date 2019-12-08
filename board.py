@@ -24,6 +24,11 @@ class Board:
 
     @classmethod
     def from_board(cls, board):
+        """
+        create a board object copy given another board
+        :param board: board to be copied
+        :return: new board copy
+        """
         cls.grid = board.grid.copy()
         cls.game_state = board.game_state
         cls.to_move = board.to_move
