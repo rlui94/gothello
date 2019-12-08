@@ -46,6 +46,13 @@ class BoardTest(unittest.TestCase):
         b.capture(1, 1)
         print(b.grid)
 
+    def test_copy(self):
+        b = Board()
+        bo = Board()
+        bo.copy(b)
+        bo.grid[0][0] = 1
+        self.assertNotEqual(bo.grid[0][0], b.grid[0][0])
+
 
 if __name__ == '__main__':
     unittest.main()
