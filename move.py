@@ -28,9 +28,7 @@ class Move:
         :param x: x coord as int
         :param y: y coord as int
         """
-        cls.x = x
-        cls.y = y
-        return cls
+        return cls(x, y)
 
     def move_digit(self, char):
         """
@@ -61,3 +59,25 @@ class Move:
             raise Exception("Bad letter")
         else:
             return switcher[char]
+
+    def is_pass(self):
+        """
+        check if move is a pass
+        :return: True of pass, false otherwise
+        """
+        return self.x == -1 and self.y == -1
+
+    def name(self):
+        if self.is_pass():
+            return "pass"
+        elif not (0 <= self.y <= BOARD_SIZE):
+            raise Exception("bad y coord in square")
+        switcher = {}
+        alpha_num = 97
+        for i in range(BOARD_SIZE):
+            switcher[i] = chr(alpha_num) + str(self.y+1)
+            alpha_num += 1
+        if (self.x+1) not in switcher:
+            raise Exception("bad x coord in square")
+        else:
+            return switcher[self.x+1]

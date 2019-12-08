@@ -23,18 +23,16 @@ class Board:
         self.to_move = BLACK
         self.previous_move = ''
 
-    @classmethod
-    def from_board(cls, board):
+    def copy(self, board):
         """
-        create a board object copy given another board
+        Copy another board object
         :param board: board to be copied
         :return: new board copy
         """
-        cls.grid = board.grid.copy()
-        cls.game_state = board.game_state
-        cls.to_move = board.to_move
-        cls.previous_move = board.previous_move
-        return cls()
+        self.grid = board.grid.copy()
+        self.game_state = board.game_state
+        self.to_move = board.to_move
+        self.previous_move = board.previous_move
 
     def print_board(self):
         """
