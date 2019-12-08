@@ -2,7 +2,6 @@
 # https://github.com/pdx-cs-ai/gothello-gthd/blob/35757a7525dac383e23065097f9a35b2385eef82/Board.java
 from move import Move
 
-
 GAME_OVER = 1
 CONTINUE = 0
 ILLEGAL_MOVE = -1
@@ -17,6 +16,7 @@ class Board:
     Board class containing information about a single instance of the board.
     grid: BOARD_SIZE by BOARD_SIZE list of lists of integers. Each list is a column from bottom to top.
     """
+
     def __init__(self):
         """
         """
@@ -56,6 +56,7 @@ class Board:
         print the current grid state with W for white, B for black, . for empty square, * for error
         :return:
         """
+
         def get_square(sq):
             switcher = {
                 WHITE: 'W',
@@ -63,7 +64,8 @@ class Board:
                 0: '.'
             }
             return switcher.get(sq, "*")
-        for j in range(BOARD_SIZE-1, -1, -1):
+
+        for j in range(BOARD_SIZE - 1, -1, -1):
             line = ''
             for i in range(BOARD_SIZE):
                 line += get_square(self.grid[i][j])
@@ -75,7 +77,7 @@ class Board:
         create a BOARD_SIZE sized board as a list of lists of bools init to all False
         :return:
         """
-        return [[False]*BOARD_SIZE for _ in range(BOARD_SIZE)]
+        return [[False] * BOARD_SIZE for _ in range(BOARD_SIZE)]
 
     def flood(self, scratch, color, x, y):
         """
@@ -115,11 +117,11 @@ class Board:
             return False
         if x > 0 and scratch[x - 1][y]:
             return True
-        if x < BOARD_SIZE-1 and scratch[x + 1][y]:
+        if x < BOARD_SIZE - 1 and scratch[x + 1][y]:
             return True
         if y > 0 and scratch[x][y - 1]:
             return True
-        if y < BOARD_SIZE-1 and scratch[x][y + 1]:
+        if y < BOARD_SIZE - 1 and scratch[x][y + 1]:
             return True
         return False
 
@@ -198,11 +200,11 @@ class Board:
         """
         if m.x > 0 and self.grid[m.x - 1][m.y] == self.opponent(self.to_move):
             self.capture(m.x - 1, m.y)
-        if m.x < BOARD_SIZE-1 and self.grid[m.x + 1][m.y] == self.opponent(self.to_move):
+        if m.x < BOARD_SIZE - 1 and self.grid[m.x + 1][m.y] == self.opponent(self.to_move):
             self.capture(m.x + 1, m.y)
         if m.y > 0 and self.grid[m.x][m.y - 1] == self.opponent(self.to_move):
             self.capture(m.x, m.y - 1)
-        if m.y < BOARD_SIZE-1 and self.grid[m.x][m.y + 1] == self.opponent(self.to_move):
+        if m.y < BOARD_SIZE - 1 and self.grid[m.x][m.y + 1] == self.opponent(self.to_move):
             self.capture(m.x, m.y + 1)
 
     def try_move(self, m: Move):
@@ -230,3 +232,25 @@ class Board:
         # go to opp
         self.to_move = self.opponent(self.to_move)
         return CONTINUE
+
+    def referee(self):
+        """
+        Finds winner of finished game
+        :return: int, WHITE if white wins, BLACK if black wins, OBSERVER otherwise
+        """
+        if self.game_state != GAME_OVER:
+            raise Exception("internal error: referee unfinished game")
+        nblack = 0
+        nwhite = 0
+        for i in range(BOARD_SIZE):
+            for j in range(BOARD_SIZE):
+                if self.grid[i][j] == BLACK:
+                    nblack += 1
+                if self.grid[i][j] == WHITE:
+                    nwhite += 1
+        if nwhite > nblack:
+            return WHITE
+        elif nblack > nwhite:
+            return BLACK
+        else:
+            return OBSERVER
