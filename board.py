@@ -123,14 +123,16 @@ class Board:
             return True
         return False
 
-    def liberties(self, x, y):
+    def liberties(self, x, y, scratch=None):
         """
-        Find the number of liberties for position xy
+        Find the number of liberties for position xy. Optionally use a provided scratch board.
         :param x: x coord as int
         :param y: y coord as int
+        :param scratch: Optional BOARD_SIZE board as list of lists of bools (init all False)
         :return: number of liberties as int
         """
-        scratch = self.scratch_board()
+        if scratch is None:
+            scratch = self.scratch_board()
         self.flood(scratch, self.grid[x][y], x, y)
         n = 0
         for i in range(BOARD_SIZE):
@@ -179,11 +181,10 @@ class Board:
         :param y: y coord as int
         :return:
         """
-        if self.liberties(x, y) > 0:
+        scratch = self.scratch_board()
+        if self.liberties(x, y, scratch) > 0:
             return
         else:
-            scratch = self.scratch_board()
-            self.flood(scratch, self.grid[x][y], x, y)
             for i in range(BOARD_SIZE):
                 for j in range(BOARD_SIZE):
                     if scratch[i][j]:
