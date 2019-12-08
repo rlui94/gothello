@@ -31,7 +31,8 @@ class Board:
         :param board: board to be copied
         :return: new board copy
         """
-        self.grid = board.grid.copy()
+        for col in board.grid:
+            self.grid.append(col.copy())
         self.game_state = board.game_state
         self.to_move = board.to_move
         self.previous_move = board.previous_move
