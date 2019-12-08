@@ -188,17 +188,18 @@ class Board:
                     if scratch[i][j]:
                         self.grid[i][j] = self.to_move
 
-    def do_captures(self, mv: Move):
+    def do_captures(self, m: Move):
         """
         For a given move, compute the resulting captures
-        :param mv: move as Move object
+        :param m: move as Move object
         :return:
         """
-        if mv.x > 0 and self.grid[mv.x-1][mv.y] == self.opponent(self.to_move):
-            self.capture(mv.x-1, mv.y)
-        if mv.x < BOARD_SIZE-1 and self.grid[mv.x+1][mv.y] == self.opponent(self.to_move):
-            self.capture(mv.x+1, mv.y)
-        if mv.y > 0 and self.grid[mv.x][mv.y-1] == self.opponent(self.to_move):
-            self.capture(mv.x, mv.y-1)
-        if mv.y < BOARD_SIZE-1 and self.grid[mv.x][mv.y+1] == self.opponent(self.to_move):
-            self.capture(mv.x, mv.y+1)
+        if m.x > 0 and self.grid[m.x - 1][m.y] == self.opponent(self.to_move):
+            self.capture(m.x - 1, m.y)
+        if m.x < BOARD_SIZE-1 and self.grid[m.x + 1][m.y] == self.opponent(self.to_move):
+            self.capture(m.x + 1, m.y)
+        if m.y > 0 and self.grid[m.x][m.y - 1] == self.opponent(self.to_move):
+            self.capture(m.x, m.y - 1)
+        if m.y < BOARD_SIZE-1 and self.grid[m.x][m.y + 1] == self.opponent(self.to_move):
+            self.capture(m.x, m.y + 1)
+
