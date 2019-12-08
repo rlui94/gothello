@@ -107,7 +107,7 @@ class Board:
         :param y: y coord as int
         :return: number of liberties as int
         """
-        scratch = scratch_board()
+        scratch = self.scratch_board()
         self.flood(scratch, self.grid[x][y], x, y)
         n = 0
         for i in range(BOARD_SIZE):
