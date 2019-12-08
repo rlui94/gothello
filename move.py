@@ -15,20 +15,12 @@ class Move:
         if desc == "pass":
             self.x = -1
             self.y = -1
-        elif desc.len != 2:
+        elif len(desc) != 2:
             raise Exception('Moves must be 2 char')
         else:
             self.x = self.move_letter(desc[0])
             self.y = self.move_digit(desc[1])
 
-    @classmethod
-    def from_coords(cls, x, y):
-        """
-        Create a move object given coordinates
-        :param x: x coord as int
-        :param y: y coord as int
-        """
-        return cls(x, y)
 
     def move_digit(self, char):
         """
@@ -75,7 +67,7 @@ class Move:
         switcher = {}
         alpha_num = 97
         for i in range(BOARD_SIZE):
-            switcher[i] = chr(alpha_num) + str(self.y+1)
+            switcher[i+1] = chr(alpha_num) + str(self.y+1)
             alpha_num += 1
         if (self.x+1) not in switcher:
             raise Exception("bad x coord in square")
