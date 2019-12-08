@@ -23,7 +23,7 @@ class Board:
         self.grid = [[0] * BOARD_SIZE for _ in range(BOARD_SIZE)]  # initialize grid to all 0s
         self.game_state = CONTINUE
         self.to_move = BLACK
-        self.previous_move = ''
+        self.previous_move = None
 
     def copy(self, board):
         """
@@ -203,3 +203,28 @@ class Board:
         if m.y < BOARD_SIZE-1 and self.grid[m.x][m.y + 1] == self.opponent(self.to_move):
             self.capture(m.x, m.y + 1)
 
+    def try_move(self, m: Move):
+        """
+        Attempt a move
+        :param m: move object
+        :return: status code as integer:
+            GAME_OVER = 1
+            CONTINUE = 0
+            ILLEGAL_MOVE = -1
+        """
+        # game state checks
+        if self.game_state != CONTINUE:
+            return ILLEGAL_MOVE
+        if m.is_pass() and self.previous_move is not None and self.previous_move.is_pass():
+            self.game_state = GAME_OVER
+            return GAME_OVER
+        if not self.move_ok(m):
+            return ILLEGAL_MOVE
+        # make move
+        self.previous_move = m
+        if not m.is_pass():
+            self.grid[m.x][m.y] = self.to_move
+            self.do_captures(m)
+        # go to opp
+        self.to_move = self.opponent(self.to_move)
+        return CONTINUE
