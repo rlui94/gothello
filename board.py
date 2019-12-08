@@ -48,7 +48,7 @@ class Board:
                 line += get_square(self.grid[i][j])
             print(line)
 
-    def scratch_board():
+    def scratch_board(self):
         """
         create a BOARD_SIZE sized board as a list of lists of bools init to all False
         :return:
