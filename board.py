@@ -36,6 +36,20 @@ class Board:
         self.to_move = board.to_move
         self.previous_move = board.previous_move
 
+    @staticmethod
+    def opponent(color):
+        """
+        Return color of opponent
+        :param color: color of player as int
+        :return: color of opponent as int
+        """
+        if color == WHITE:
+            return BLACK
+        elif color == BLACK:
+            return WHITE
+        else:
+            raise Exception("Bad color argument")
+
     def print_board(self):
         """
         print the current grid state with W for white, B for black, . for empty square, * for error
@@ -156,3 +170,35 @@ class Board:
                     if self.move_ok(m):
                         res.append(m)
         return res
+
+    def capture(self, x, y):
+        """
+        Attempt to capture a square of the board
+        :param x: x coord as int
+        :param y: y coord as int
+        :return:
+        """
+        if self.liberties(x, y) > 0:
+            return
+        else:
+            scratch = self.scratch_board()
+            self.flood(scratch, self.grid[x][y], x, y)
+            for i in range(BOARD_SIZE):
+                for j in range(BOARD_SIZE):
+                    if scratch[i][j]:
+                        self.grid[i][j] = self.to_move
+
+    def do_captures(self, mv: Move):
+        """
+        For a given move, compute the resulting captures
+        :param mv: move as Move object
+        :return:
+        """
+        if mv.x > 0 and self.grid[mv.x-1][mv.y] == self.opponent(self.to_move):
+            self.capture(mv.x-1, mv.y)
+        if mv.x < BOARD_SIZE-1 and self.grid[mv.x+1][mv.y] == self.opponent(self.to_move):
+            self.capture(mv.x+1, mv.y)
+        if mv.y > 0 and self.grid[mv.x][mv.y-1] == self.opponent(self.to_move):
+            self.capture(mv.x, mv.y-1)
+        if mv.y < BOARD_SIZE-1 and self.grid[mv.x][mv.y+1] == self.opponent(self.to_move):
+            self.capture(mv.x, mv.y+1)

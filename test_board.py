@@ -12,8 +12,8 @@ letter_grid = [['a1', 'a2', 'a3','a4','a5'],
 number_grid = [[0, 1, 0, 0, 0],
                [1, 1, 0, 1, 1],
                [0, 0, 0, 2, 1],
-               [0, 2, 0, 1, 0],
-               [2, 0, 2, 0, 1],
+               [0, 2, 0, 2, 0],
+               [2, 0, 2, 1, 2],
                ]
 
 
@@ -37,6 +37,14 @@ class BoardTest(unittest.TestCase):
         mvs = b.gen_moves()
         for mv in mvs:
             print(mv.name())
+
+    def test_capture(self):
+        b = Board()
+        b.grid = number_grid
+        b.capture(4, 3)
+        print(b.grid)
+        b.capture(1, 1)
+        print(b.grid)
 
 
 if __name__ == '__main__':
