@@ -7,22 +7,30 @@ class Move:
     Grid coords in range 0-BOARD_SIZE where 1st is the column(x) value and second is the row(y) value
     Coord -1, -1 is a pass
     """
-    def __init__(self, desc):
+    def __init__(self, x, y):
+        """
+        Create a move object given x and y coords
+        :param x: x coord as int
+        :param y: y coord as int
+        """
+        self.x = x
+        self.y = y
+
+    @classmethod
+    def from_desc(cls, desc):
         """
         Create a move object given a string description
         :param desc: Two character string coord or the string "pass"
         """
         if desc == "pass":
-            self.x = -1
-            self.y = -1
+            return cls(-1, -1)
         elif len(desc) != 2:
             raise Exception('Moves must be 2 char')
         else:
-            self.x = self.move_letter(desc[0])
-            self.y = self.move_digit(desc[1])
+            return cls(Move.move_letter(desc[0]), Move.move_digit(desc[1]))
 
-
-    def move_digit(self, char):
+    @staticmethod
+    def move_digit(char):
         """
         given a char number return coord as int
         :param char: number as single char
@@ -36,7 +44,8 @@ class Move:
         else:
             return switcher[char]
 
-    def move_letter(self, char):
+    @staticmethod
+    def move_letter(char):
         """
         given a char letter return coord as int
         :param char: letter as single char
