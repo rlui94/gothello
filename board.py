@@ -1,5 +1,7 @@
 # Heavily based on
 # https://github.com/pdx-cs-ai/gothello-gthd/blob/35757a7525dac383e23065097f9a35b2385eef82/Board.java
+from move import Move
+
 
 GAME_OVER = 1
 CONTINUE = 0
@@ -18,7 +20,7 @@ class Board:
     def __init__(self):
         """
         """
-        self.grid = [[0 in range(BOARD_SIZE)] * 2]  # initialize grid to all 0s
+        self.grid = [[0] * BOARD_SIZE for _ in range(BOARD_SIZE)]  # initialize grid to all 0s
         self.game_state = CONTINUE
         self.to_move = BLACK
         self.previous_move = ''
@@ -52,12 +54,13 @@ class Board:
                 line += get_square(self.grid[i][j])
             print(line)
 
-    def scratch_board(self):
+    @staticmethod
+    def scratch_board():
         """
         create a BOARD_SIZE sized board as a list of lists of bools init to all False
         :return:
         """
-        return [[False in range(BOARD_SIZE)] * 2]
+        return [[False]*BOARD_SIZE for _ in range(BOARD_SIZE)]
 
     def flood(self, scratch, color, x, y):
         """
@@ -84,7 +87,8 @@ class Board:
         self.flood(scratch, color, x, y - 1)
         self.flood(scratch, color, x, y + 1)
 
-    def group_border(self, scratch, x, y):
+    @staticmethod
+    def group_border(scratch, x, y):
         """
         Check if coord x,y is a border square
         :param scratch: BOARD_SIZE sized board as a list of lists of bools that has been flooded with flood()
@@ -120,3 +124,35 @@ class Board:
                     n += 1
         return n
 
+    def move_ok(self, mv: Move):
+        """
+        Find if move is legal
+        :param mv: move to check
+        :return: True if legal, False otherwise
+        """
+        if mv.is_pass():
+            return True
+        elif self.grid[mv.x][mv.y] != 0:
+            return False
+        else:
+            self.grid[mv.x][mv.y] = self.to_move
+            libs = self.liberties(mv.x, mv.y)
+            self.grid[mv.x][mv.y] = 0
+            if libs == 0:
+                return False
+            else:
+                return True
+
+    def gen_moves(self):
+        """
+        Generate list of legal moves
+        :return: list of move objects
+        """
+        res = []
+        for i in range(BOARD_SIZE):
+            for j in range(BOARD_SIZE):
+                if self.grid[i][j] == 0:
+                    m = Move(i, j)
+                    if self.move_ok(m):
+                        res.append(m)
+        return res
