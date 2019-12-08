@@ -1,4 +1,5 @@
-
+# Heavily based on
+# https://github.com/pdx-cs-ai/gothello-gthd/blob/35757a7525dac383e23065097f9a35b2385eef82/Board.java
 
 GAME_OVER = 1
 CONTINUE = 0
