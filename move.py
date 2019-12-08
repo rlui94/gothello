@@ -17,14 +17,27 @@ class Move:
             self.y = -1
         elif desc.len != 2:
             raise Exception('Moves must be 2 char')
+        else:
+            self.x = self.move_letter(desc[0])
+            self.y = self.move_digit(desc[1])
 
     @classmethod
     def from_coords(cls, x, y):
+        """
+        Create a move object given coordinates
+        :param x: x coord as int
+        :param y: y coord as int
+        """
         cls.x = x
         cls.y = y
         return cls
 
     def move_digit(self, char):
+        """
+        given a char number return coord as int
+        :param char: number as single char
+        :return: coord as int
+        """
         switcher = {}
         for i in range(BOARD_SIZE):
             switcher[str(i+1)] = i
@@ -34,6 +47,11 @@ class Move:
             return switcher[char]
 
     def move_letter(self, char):
+        """
+        given a char letter return coord as int
+        :param char: letter as single char
+        :return: coord as int
+        """
         switcher = {}
         alpha_num = 97
         for i in range(BOARD_SIZE):
