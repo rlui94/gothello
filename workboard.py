@@ -28,26 +28,20 @@ class Workboard(board.Board):
                     ostones += 1
         return nstones - ostones
 
-    def minimax(self, depth, max_player):
-        # if target depth reached or game over
-        if depth <= 0 or self.game_state == board.GAME_OVER:
-            return self.heval()
+    def minimax(self, depth, alpha, beta, max_player):
         mvs = self.gen_moves()
         # if no possible moves remain
         if len(mvs) == 0:
-            scratch = Workboard()
-            scratch.copy(self)
-            status = scratch.try_move(scratch.best_move)
-            if status != board.GAME_OVER:
-                return 0  # not sure about this
-            # if game is over, return INF/-INF depending on who won
-            result = scratch.referee()
-            if result == self.to_move:
+            result = self.heval()
+            if result > 0:
                 return INF
-            elif result == self.opponent(self.to_move):
+            elif result < 0:
                 return -INF
             else:
                 return 0
+        # if target depth reached or game over
+        if depth <= 0 or self.game_state == board.GAME_OVER:
+            return self.heval()
         if max_player:
             max_eval = -INF
             for mv in mvs:
@@ -58,8 +52,11 @@ class Workboard(board.Board):
                     raise Exception("unexpectedly illegal move")
                 if status == board.GAME_OVER:
                     raise Exception("unexpectedly game over")
-                child_eval = scratch.minimax(depth-1, False)
+                child_eval = scratch.minimax(depth-1, alpha, beta, False)
                 max_eval = max(max_eval, child_eval)
+                alpha = max(alpha, child_eval)
+                if beta <= alpha:
+                    break
             return max_eval
         else:
             min_eval = INF
@@ -71,8 +68,11 @@ class Workboard(board.Board):
                     raise Exception("unexpectedly illegal move")
                 if status == board.GAME_OVER:
                     raise Exception("unexpectedly game over")
-                child_eval = scratch.minimax(depth - 1, True)
+                child_eval = scratch.minimax(depth - 1, alpha, beta, True)
                 min_eval = min(min_eval, child_eval)
+                beta = min(beta, child_eval)
+                if beta <= alpha:
+                    break
             return min_eval
 
     def find_best_move(self, depth):
@@ -87,7 +87,7 @@ class Workboard(board.Board):
                 raise Exception("unexpectedly illegal move")
             if status == board.GAME_OVER:
                 raise Exception("unexpectedly game over")
-            move_val = scratch.minimax(depth-1, False)
+            move_val = scratch.minimax(depth-1, -INF, INF, False)
             if move_val > best_val:
                 best_move = mv
                 best_val = move_val
