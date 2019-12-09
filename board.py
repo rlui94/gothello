@@ -1,6 +1,7 @@
 # Heavily based on
 # https://github.com/pdx-cs-ai/gothello-gthd/blob/35757a7525dac383e23065097f9a35b2385eef82/Board.java
 from move import Move
+import copy
 
 GAME_OVER = 1
 CONTINUE = 0
@@ -31,8 +32,7 @@ class Board:
         :param board: board to be copied
         :return: new board copy
         """
-        for col in board.grid:
-            self.grid.append(col.copy())
+        self.grid = copy.deepcopy(board.grid)
         self.game_state = board.game_state
         self.to_move = board.to_move
         self.previous_move = board.previous_move
