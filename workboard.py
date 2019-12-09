@@ -102,5 +102,7 @@ class Workboard(board.Board):
             if move_val > best_val:
                 best_move = mv
                 best_val = move_val
+        if best_move is None:
+            return board.Move.from_desc("pass")
         return best_move
 
