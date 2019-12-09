@@ -47,7 +47,7 @@ class Player:
         """
         while True:
 
-            if self.board.to_move == me:
+            if self.board.to_move == self.color:
                 mv = self.board.find_best_move(DEPTH)  # mv is a Move object
                 print("me:", mv.name())
                 try:
@@ -59,8 +59,8 @@ class Player:
                         self.client.make_move("pass")
             else:
                 cont, mv = self.client.get_move()  # mv is a string eg "a1"
-                print("opp:", move)
-                if cont and move == "pass":
+                print("opp:", mv)
+                if cont and mv == "pass":
                     print("me: pass to end game")
                     self.client.make_move("pass")
                     break
@@ -71,10 +71,14 @@ class Player:
 
 
 if sys.argv[1] == "white":
-    me = WHITE
+    me = "white"
+    color = WHITE
 elif sys.argv[1] == "black":
-    me = BLACK
+    me = "black"
+    color = BLACK
 else:
     raise Exception("bad color arg")
 clnt = gthclient.GthClient(me, "localhost", 0)
-player = Player(DEPTH, me, clnt)
+player = Player(DEPTH, color, clnt)
+player.play()
+
