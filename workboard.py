@@ -6,12 +6,10 @@ INF = pow(board.BOARD_SIZE, 2)
 
 class Workboard(board.Board):
     def __init__(self):
-        self.best_move = None
         super().__init__()
 
     def copy(self, wb):
         super().copy(wb)
-        self.best_move = wb.best_move
 
     def heval(self):
         """
@@ -29,6 +27,14 @@ class Workboard(board.Board):
         return nstones - ostones
 
     def minimax(self, depth, alpha, beta, max_player):
+        """
+        Recursive Minimax function w/ alpha-beta pruning
+        :param depth: depth to which to search as int
+        :param alpha: value to compare with beta for pruning as int
+        :param beta: value to compare with alpha for pruning as int
+        :param max_player: True if current player is maximizing, false if current player is minimizing
+        :return: score as int
+        """
         mvs = self.gen_moves()
         # if no possible moves remain
         if len(mvs) == 0:
@@ -76,6 +82,11 @@ class Workboard(board.Board):
             return min_eval
 
     def find_best_move(self, depth):
+        """
+        Find best move from current board state using minimax()
+        :param depth: depth to which we search as int
+        :return: best move as Move object
+        """
         best_move = None
         best_val = -INF
         mvs = self.gen_moves()
