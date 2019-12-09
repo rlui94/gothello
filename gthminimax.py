@@ -1,25 +1,24 @@
 #!/usr/bin/python3
 
-# Random-move Gothello player.
+# Minimax Gothello player.
 
-import random
 import sys
+import workboard
+import move
 import gthclient
 
 
-def heval(grid, me, opp):
-    """
-    Score current grid as # player's pieces minus # of opp's pieces
-    :param grid:    current state of the board as a dictionary of sets. Dict keys are 'black' or 'white' with values
-        being a set of letter+digit combos signifying spots taken by those colors.
-    :param me:     This player's color ('black' or 'white')
-    :param opp:    Enemy player's color ('black' or 'white')
-    :return: int
-    """
-    return len(grid[me]) - len(grid[opp])
+GAME_OVER = 1
+CONTINUE = 0
+ILLEGAL_MOVE = -1
+WHITE = 1
+BLACK = 2
+OBSERVER = 3
+BOARD_SIZE = 5
+DEPTH = 3
 
 
-class Minimax:
+class Player:
     """
     Gothello player using minimax algorithm
     me:     This player's color ('black' or 'white')
@@ -31,76 +30,35 @@ class Minimax:
         a set of letter+digit combos signifying spots taken by those colors.
     """
 
-    def __init__(self, color, board_size):
+    def __init__(self, depth, color, client):
         """
-        :param color: This player's color ('black' or 'white')
-        :param board_size: Size of board
-
+        :param depth: depth to search as int
+        :param color: player's color as int
         """
-        self.me = color
-        self.client = gthclient.GthClient(self.me, "localhost", 0)
-        self.opp = gthclient.opponent(self.me)
-        self.board_size = board_size
-        self.board = {letter + digit for letter in self.letter_range('a') for digit in self.letter_range('1')}
-        self.grid = {"white": set(), "black": set()}
-
-    def letter_range(self, letter):
-        """
-        Get range of letter or digit coordinate
-        :param letter: letter or digit as string
-        :return: range of letters or digits
-        """
-        for i in range(self.board_size):
-            yield chr(ord(letter) + i)
-
-    def show_position(self):
-        """
-        Print current grid where white is "O", black is "*", empty space is "."
-        :return:
-        """
-        for digit in self.letter_range('1'):
-            for letter in self.letter_range('a'):
-                pos = letter + digit
-                if pos in self.grid["white"]:
-                    piece = "O"
-                elif pos in self.grid["black"]:
-                    piece = "*"
-                else:
-                    piece = "."
-                print(piece, end="")
-            print()
-    
-    def minimax(self, curr_grid, curr_board, depth, max_player):
-        side = self.me  # Called on this player's turn
-        if depth <= 0:
-            return heval(curr_grid, self.me, self.opp)  # returns score from pov of caller of minimax
-        if side == max_player:
-            max_eval = -100
-            for pos in curr_board:
-                #  eval = minimax()
+        self.depth = depth
+        self.board = workboard.Workboard()
+        self.client = client
+        self.color = color
 
     def play(self):
         """
         Commence playing a game of Gothello
         :return:
         """
-        side = "black"  # black always goes first
-
         while True:
-            self.show_position()
-            if side == self.me:
-                move = random.choice(list(self.board))
-                print("me:", move)
+
+            if self.board.to_move == me:
+                mv = self.board.find_best_move(DEPTH)  # mv is a Move object
+                print("me:", mv.name())
                 try:
-                    self.client.make_move(move)
-                    self.grid[self.me].add(move)
-                    self.board.remove(move)
+                    self.client.make_move(mv.name())
+                    self.board.try_move(mv)
                 except gthclient.MoveError as e:
                     if e.cause == e.ILLEGAL:
                         print("me: made illegal move, passing")
                         self.client.make_move("pass")
             else:
-                cont, move = self.client.get_move()
+                cont, mv = self.client.get_move()  # mv is a string eg "a1"
                 print("opp:", move)
                 if cont and move == "pass":
                     print("me: pass to end game")
@@ -109,7 +67,14 @@ class Minimax:
                 else:
                     if not cont:
                         break
-                    self.board.remove(move)
-                    self.grid[self.opp].add(move)
+                    self.board.try_move(move.Move.from_desc(mv))
 
-            side = gthclient.opponent(side)
+
+if sys.argv[1] == "white":
+    me = WHITE
+elif sys.argv[1] == "black":
+    me = BLACK
+else:
+    raise Exception("bad color arg")
+clnt = gthclient.GthClient(me, "localhost", 0)
+player = Player(DEPTH, me, clnt)
