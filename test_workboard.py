@@ -16,6 +16,13 @@ cap_grid = [[0, 1, 0, 1, 1],
             [2, 0, 2, 1, 2],
             ]
 
+end_grid = [[1, 1, 2, 1, 1],
+            [1, 1, 2, 1, 1],
+            [1, 2, 2, 2, 2],
+            [0, 2, 1, 2, 1],
+            [2, 0, 2, 1, 2],
+            ]
+
 
 class WorkboardTests(unittest.TestCase):
     def test_constructor(self):
@@ -36,6 +43,11 @@ class WorkboardTests(unittest.TestCase):
     def test_find_best(self):
         wb = Workboard()
         wb.grid = cap_grid
+        print(wb.find_best_move(3).name())
+
+    def test_end(self):
+        wb = Workboard()
+        wb.grid = end_grid
         print(wb.find_best_move(3).name())
 
 
